@@ -1,7 +1,7 @@
 {
-  "name": "Cal.diy",
-  "description": "Open Source Scheduling",
-  "repository": "https://github.com/calcom/cal.diy",
+  "name": "Schiceya Cal",
+  "description": "One calendar for every part of your work",
+  "repository": "https://github.com/cyberjessai-lab/schiceya-cal",
   "logo": "https://cal.com/android-chrome-512x512.png",
   "keywords": ["react", "typescript", "node", "nextjs", "prisma", "postgres", "trpc"],
   "addons": [

@@ -70,6 +70,7 @@ export type TCreateEventTypeInput = {
   slug: string;
   description?: string | null;
   length: number;
+  bookingContexts?: string;
   hidden?: boolean;
   teamId?: number | null;
   schedulingType?: SchedulingType | null;
@@ -90,6 +91,7 @@ export const createEventTypeInput: z.ZodType<TCreateEventTypeInput> = z
     slug: eventTypeSlug,
     description: z.string().nullish(),
     length: z.number().int(),
+    bookingContexts: z.string().trim().max(500).optional(),
     hidden: z.boolean(),
     teamId: z.number().int().nullish(),
     schedulingType: z.nativeEnum(SchedulingType).nullish(),

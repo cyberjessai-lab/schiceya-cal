@@ -1,26 +1,26 @@
 > [!WARNING]  
-> Use at your own risk. Cal.diy is the open source community edition of Cal.com and it is intended for users who want to self-host their own Cal.diy instance. It is strictly recommended for personal, non-production use. Please review all installation and configuration steps carefully. Self-hosting requires advanced knowledge of server administration, database management, and securing sensitive data. Proceed only if you are comfortable with these responsibilities.
+> Use at your own risk. Schiceya Cal is a personal scheduling workspace based on Cal.diy, the open-source community edition of Cal.com. Please review all installation and configuration steps carefully. Self-hosting requires knowledge of server administration, database management, and securing sensitive data.
 
 > [!TIP]
 > For any commercial and enterprise-ready scheduling infrastructure, use Cal.com, not Cal.diy; hosted by us or get invited to on-prem enterprise access here: <a href="https://cal.com/sales">https://cal.com/sales</a>
 
 <!-- PROJECT LOGO -->
 <p align="center">
-  <a href="https://github.com/calcom/cal.diy">
-   <img src="https://user-images.githubusercontent.com/8019099/210054112-5955e812-a76e-4160-9ddd-58f2c72f1cce.png" alt="Logo">
+  <a href="https://github.com/cyberjessai-lab/schiceya-cal">
+   <img src="./apps/web/public/schiceya-cal-wordmark.svg" alt="Schiceya Cal">
   </a>
 
-  <h3 align="center">Cal.diy</h3>
+  <h3 align="center">Schiceya Cal</h3>
 
   <p align="center">
-    The community-driven, open-source scheduling platform.
+    One calendar for every part of your work.
     <br />
-    <a href="https://github.com/calcom/cal.diy"><strong>GitHub</strong></a>
+    <a href="https://github.com/cyberjessai-lab/schiceya-cal"><strong>GitHub</strong></a>
     <br />
     <br />
-    <a href="https://github.com/calcom/cal.diy/discussions">Discussions</a>
+    <a href="https://github.com/cyberjessai-lab/schiceya-cal/discussions">Discussions</a>
     &middot;
-    <a href="https://github.com/calcom/cal.diy/issues">Issues</a>
+    <a href="https://github.com/cyberjessai-lab/schiceya-cal/issues">Issues</a>
     &middot;
     <a href="./CONTRIBUTING.md">Contributing</a>
   </p>
@@ -37,13 +37,13 @@
 
 <!-- ABOUT THE PROJECT -->
 
-## About Cal.diy
+## About Schiceya Cal
 
 <img width="100%" alt="booking-screen" src="https://github.com/calcom/cal.diy/assets/8019099/407e727e-ff19-4ca4-bcae-049dca05cf02">
 
-**Cal.diy** is the community-driven, fully open-source scheduling platform — a fork of [Cal.com](https://cal.com) with all enterprise/commercial code removed.
+**Schiceya Cal** is a personal scheduling workspace for consolidating bookings from multiple businesses into one calendar. Each event can ask what the booking is for and include that context in the calendar title.
 
-Cal.diy is **100% MIT-licensed** with no proprietary "Enterprise Edition" features. It's designed for individuals and self-hosters who want full control over their scheduling infrastructure without any commercial dependencies.
+It is based on [Cal.diy](https://github.com/calcom/cal.diy), which is **100% MIT-licensed** and derived from [Cal.com](https://cal.com).
 
 ### What's different from Cal.com?
 
@@ -71,7 +71,7 @@ To get a local copy up and running, please follow these simple steps.
 
 ### Prerequisites
 
-Here’s what you need to run Cal.diy.
+Here’s what you need to run Schiceya Cal.
 
 - Node.js (Version: >=18.x)
 - PostgreSQL (Version: >=13.x)
@@ -83,19 +83,19 @@ Here’s what you need to run Cal.diy.
 
 ### Setup
 
-1. Clone the repo (or fork https://github.com/calcom/cal.diy/fork)
+1. Clone the repo
 
    ```sh
-   git clone https://github.com/calcom/cal.diy.git
+   git clone https://github.com/cyberjessai-lab/schiceya-cal.git
    ```
 
    > If you are on Windows, run the following command in Git Bash with admin privileges:
-   > `git clone -c core.symlinks=true https://github.com/calcom/cal.diy.git`
+   > `git clone -c core.symlinks=true https://github.com/cyberjessai-lab/schiceya-cal.git`
 
 2. Go to the project folder
 
    ```sh
-   cd cal.diy
+   cd schiceya-cal
    ```
 
 3. Install packages with yarn
