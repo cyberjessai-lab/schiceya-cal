@@ -29,6 +29,5 @@
       "path": "/api/cron/selected-calendars",
       "schedule": "0 6 * * *"
     }
-  ],
-  "functions": {}
+  ]
 }
