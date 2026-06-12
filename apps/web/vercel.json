@@ -1,4 +1,6 @@
 {
+  "installCommand": "cd ../.. && yarn install --immutable --mode=skip-build",
+  "buildCommand": "cd ../.. && NODE_OPTIONS=--max-old-space-size=8192 yarn build",
   "regions": ["sfo1"],
   "crons": [
     {
