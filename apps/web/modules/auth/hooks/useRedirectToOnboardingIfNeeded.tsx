@@ -46,7 +46,10 @@ export function useRedirectToOnboardingIfNeeded() {
 
   useEffect(() => {
     if (canRedirect) {
-      const gettingStartedPath = flags["onboarding-v3"] ? "/onboarding/getting-started" : "/getting-started";
+      let gettingStartedPath = "/getting-started";
+      if (flags["onboarding-v3"]) {
+        gettingStartedPath = "/onboarding/personal/settings";
+      }
       router.replace(gettingStartedPath);
     }
   }, [canRedirect, router, flags, pathname]);

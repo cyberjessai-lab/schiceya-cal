@@ -150,6 +150,15 @@ export default function CreateEventTypeForm({
               addOnSuffix={t("minutes").toLowerCase()}
             />
           </div>
+
+          {!isPlatform && (
+            <TextField
+              label="Business and booking options"
+              placeholder="PatientCare, Consulting, Personal"
+              hint="Separate options with commas. Bookers will choose one, and it will be added to the calendar event title."
+              {...register("bookingContexts")}
+            />
+          )}
         </>
       </div>
       {SubmitButton(isPending)}

@@ -1,831 +1,1030 @@
-> [!WARNING]  
-> Use at your own risk. Cal.diy is the open source community edition of Cal.com and it is intended for users who want to self-host their own Cal.diy instance. It is strictly recommended for personal, non-production use. Please review all installation and configuration steps carefully. Self-hosting requires advanced knowledge of server administration, database management, and securing sensitive data. Proceed only if you are comfortable with these responsibilities.
+# Schiceya Cal
 
-> [!TIP]
-> For any commercial and enterprise-ready scheduling infrastructure, use Cal.com, not Cal.diy; hosted by us or get invited to on-prem enterprise access here: <a href="https://cal.com/sales">https://cal.com/sales</a>
-
-<!-- PROJECT LOGO -->
 <p align="center">
-  <a href="https://github.com/calcom/cal.diy">
-   <img src="https://user-images.githubusercontent.com/8019099/210054112-5955e812-a76e-4160-9ddd-58f2c72f1cce.png" alt="Logo">
+  <a href="https://schiceya-cal.vercel.app">
+    <img src="./apps/web/public/schiceya-cal-wordmark.svg" alt="Schiceya Cal" width="420">
   </a>
-
-  <h3 align="center">Cal.diy</h3>
-
-  <p align="center">
-    The community-driven, open-source scheduling platform.
-    <br />
-    <a href="https://github.com/calcom/cal.diy"><strong>GitHub</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/calcom/cal.diy/discussions">Discussions</a>
-    &middot;
-    <a href="https://github.com/calcom/cal.diy/issues">Issues</a>
-    &middot;
-    <a href="./CONTRIBUTING.md">Contributing</a>
-  </p>
 </p>
 
 <p align="center">
-   <a href="https://github.com/calcom/cal.diy/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-purple" alt="License"></a>
-   <a href="https://github.com/calcom/cal.diy/stargazers"><img src="https://img.shields.io/github/stars/calcom/cal.diy" alt="Github Stars"></a>
-   <a href="https://github.com/calcom/cal.diy/pulse"><img src="https://img.shields.io/github/commit-activity/m/calcom/cal.diy" alt="Commits-per-month"></a>
-   <a href="https://hub.docker.com/r/calcom/cal.diy"><img src="https://img.shields.io/docker/pulls/calcom/cal.diy" alt="Docker Pulls"></a>
-   <a href="https://github.com/calcom/cal.diy/issues?q=is:issue+is:open+label:%22%F0%9F%99%8B%F0%9F%8F%BB%E2%80%8D%E2%99%82%EF%B8%8Fhelp+wanted%22"><img src="https://img.shields.io/badge/Help%20Wanted-Contribute-blue"></a>
-   <a href="https://contributor-covenant.org/version/1/4/code-of-conduct/"><img src="https://img.shields.io/badge/Contributor%20Covenant-1.4-purple" /></a>
+  <strong>One scheduling workspace for every part of your work.</strong>
 </p>
 
-<!-- ABOUT THE PROJECT -->
+<p align="center">
+  <a href="https://schiceya-cal.vercel.app">Live application</a>
+  |
+  <a href="https://github.com/cyberjessai-lab/schiceya-cal">GitHub repository</a>
+  |
+  <a href="./CONTRIBUTING.md">Contributing</a>
+  |
+  <a href="./LICENSE">MIT license</a>
+</p>
 
-## About Cal.diy
+Schiceya Cal is a private, self-hosted scheduling workspace for a person who runs multiple businesses but wants bookings to arrive through one system and one calendar workflow. It is built on [Cal.diy](https://github.com/calcom/cal.diy), the MIT-licensed community edition derived from Cal.com.
 
-<img width="100%" alt="booking-screen" src="https://github.com/calcom/cal.diy/assets/8019099/407e727e-ff19-4ca4-bcae-049dca05cf02">
+The central Schiceya feature asks each booker what business or area their meeting belongs to and what they want to discuss. That context is then included in the calendar event title, so a single calendar remains easy to understand.
 
-**Cal.diy** is the community-driven, fully open-source scheduling platform — a fork of [Cal.com](https://cal.com) with all enterprise/commercial code removed.
+> [!IMPORTANT]
+> The current Schiceya deployment is designed for trusted, single-admin, personal use. It is not approved for public multi-user or multi-tenant use. Several inherited permission-checking paths contain permissive placeholder implementations. Keep public signup disabled and read [Security and current limitations](#security-and-current-limitations) before exposing the service to other account holders.
 
-Cal.diy is **100% MIT-licensed** with no proprietary "Enterprise Edition" features. It's designed for individuals and self-hosters who want full control over their scheduling infrastructure without any commercial dependencies.
+## Table of contents
 
-### What's different from Cal.com?
+- [Purpose](#purpose)
+- [Current deployment](#current-deployment)
+- [Features](#features)
+- [Schiceya-specific behavior](#schiceya-specific-behavior)
+- [User journeys](#user-journeys)
+- [Architecture](#architecture)
+- [Repository structure](#repository-structure)
+- [Data model](#data-model)
+- [Technology stack](#technology-stack)
+- [Local development](#local-development)
+- [Environment variables](#environment-variables)
+- [Database operations](#database-operations)
+- [Testing and quality checks](#testing-and-quality-checks)
+- [Vercel deployment](#vercel-deployment)
+- [Scheduled jobs](#scheduled-jobs)
+- [Integrations](#integrations)
+- [Security and current limitations](#security-and-current-limitations)
+- [Before a public launch](#before-a-public-launch)
+- [Troubleshooting](#troubleshooting)
+- [Maintenance guide](#maintenance-guide)
+- [Project history and licensing](#project-history-and-licensing)
 
-- **No enterprise features** — Teams, Organizations, Insights, Workflows, SSO/SAML, and other EE-only features have been removed
-- **No license key required** — Everything works out of the box, no Cal.com account or license needed
-- **100% open source** — The entire codebase is licensed under MIT, no "Open Core" split
-- **Community-maintained** — Contributions are welcome and go directly into this project (see [CONTRIBUTING.md](./CONTRIBUTING.md))
+## Purpose
 
-> **Note:** Cal.diy is a self-hosted project. There is no hosted/managed version. You run it on your own infrastructure.
+Running several businesses often creates fragmented scheduling:
 
-### Built With
+- different booking pages;
+- separate calendar administration;
+- unclear event titles;
+- repeated availability configuration;
+- difficulty seeing which business generated a meeting.
 
-- [Next.js](https://nextjs.org/)
-- [tRPC](https://trpc.io/)
-- [React.js](https://reactjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Prisma.io](https://prisma.io/)
-- [Daily.co](https://daily.co/)
+Schiceya Cal addresses that by providing one booking administration workspace. The owner can create event types, connect calendars, define availability, and decide which calendar receives new bookings. When an event type is created, the owner can also provide business categories such as:
 
-<!-- GETTING STARTED -->
+```text
+PatientCare, Consulting, Personal
+```
 
-## Getting Started
+The public booking form then requires the guest to select a category and describe the meeting. A resulting calendar title can look like:
 
-To get a local copy up and running, please follow these simple steps.
+```text
+[Consulting] Jesse - Website strategy
+```
+
+Schiceya Cal is a scheduling hub, not a replacement calendar provider. Google Calendar, Microsoft 365, Apple Calendar, CalDAV, or another supported provider still stores the resulting events. Connected calendars can be used for conflict checking, while one chosen destination calendar receives bookings.
+
+## Current deployment
+
+The production snapshot documented here was verified on June 12, 2026.
+
+| Area | Current configuration |
+| --- | --- |
+| Application | [https://schiceya-cal.vercel.app](https://schiceya-cal.vercel.app) |
+| Hosting | Vercel |
+| Database | Neon Serverless Postgres |
+| Runtime region | Vercel `sfo1` |
+| Database region | Neon `us-west-2` |
+| Account model | Private, single administrator |
+| Public signup | Disabled |
+| Onboarding plan selector | Removed |
+| Database migrations | 595 migration directories applied at the time of this audit |
+| Cron frequency | Daily, compatible with the current Vercel Hobby configuration |
+| Email delivery | Must be configured before relying on email notifications or password reset |
+
+No credentials, database URLs, tokens, or secret values belong in this README.
+
+## Features
+
+### Schiceya features
+
+- Private first-user setup that creates the initial user as a system administrator.
+- No personal-versus-team plan selection during onboarding.
+- Direct onboarding into personal profile and scheduling settings.
+- Schiceya Cal name, logo, wordmark, email branding, and interface labels.
+- Business/context options when creating an event type.
+- Required booking-purpose selection for event types configured with those options.
+- Required meeting-reason text for the same event types.
+- Context-rich calendar titles using the selected business and reason.
+- Signup-disabled production mode for a private personal installation.
+- Vercel and Neon deployment configuration.
+- Vercel Hobby-compatible daily maintenance schedules.
+
+### Core scheduling capabilities inherited from Cal.diy
+
+The codebase also contains the broader scheduling platform inherited from Cal.diy:
+
+- public booking pages and shareable event links;
+- configurable event types and durations;
+- availability schedules, date overrides, time zones, and travel schedules;
+- selected calendars for conflict detection;
+- destination calendar selection;
+- booking creation, confirmation, rescheduling, cancellation, and no-show handling;
+- recurring events, seats, hosts, and attendee records;
+- out-of-office periods and holiday settings;
+- calendar, video, CRM, payment, analytics, automation, and webhook packages;
+- embeds and platform packages;
+- API keys, OAuth clients, webhooks, and a separate API v2 service;
+- team and organization data models and user-interface modules;
+- audit, reporting, filter, watchlist, and internal-note models.
+
+Presence in the repository does not mean a feature is configured, supported by the current deployment, or safe for public use. Integration credentials and external services must be configured individually. Team and organization functionality also requires a full authorization audit before use by untrusted users.
+
+## Schiceya-specific behavior
+
+### Booking context configuration
+
+The event creation form contains a field labeled **Business and booking options**. The administrator enters comma-separated choices.
+
+The implementation:
+
+1. Splits the text on commas.
+2. Trims whitespace.
+3. Removes empty entries.
+4. Removes duplicates without regard to letter case.
+5. Preserves the spelling of the first occurrence.
+6. Creates two required booking fields when at least one option remains.
+
+The generated fields are:
+
+| Internal name | Type | Booker label | Required |
+| --- | --- | --- | --- |
+| `business` | Select | `What are you booking for?` | Yes |
+| `title` | Text | `What would you like to discuss?` | Yes |
+
+The generated event-name template is:
+
+```text
+[{business}] {Scheduler} - {title}
+```
+
+If the administrator leaves the options field blank, the event type keeps the normal upstream booking-field and title behavior.
+
+> [!NOTE]
+> This automation currently runs when a new event type is created. Editing an existing event type does not automatically regenerate these fields. Existing event types can be adjusted manually, or the implementation can later be extended to the update handler.
+
+Relevant files:
+
+- [`packages/features/eventtypes/components/CreateEventTypeForm.tsx`](./packages/features/eventtypes/components/CreateEventTypeForm.tsx)
+- [`packages/features/eventtypes/lib/bookingContext.ts`](./packages/features/eventtypes/lib/bookingContext.ts)
+- [`packages/features/eventtypes/lib/bookingContext.test.ts`](./packages/features/eventtypes/lib/bookingContext.test.ts)
+- [`packages/features/eventtypes/lib/schemas.ts`](./packages/features/eventtypes/lib/schemas.ts)
+- [`packages/trpc/server/routers/viewer/eventTypes/heavy/create.handler.ts`](./packages/trpc/server/routers/viewer/eventTypes/heavy/create.handler.ts)
+
+### Private onboarding
+
+On a completely empty database:
+
+1. `/auth/setup` displays the first-user setup.
+2. The setup API checks that the database contains zero users.
+3. It validates the username, name, email, and password.
+4. It creates a verified Cal-identity user with the system role `ADMIN`.
+5. Further setup requests are rejected after a user exists.
+6. After sign-in, incomplete onboarding goes directly to `/onboarding/personal/settings`.
+7. The removed plan-selection screen cannot be used to downgrade the owner to a limited personal plan.
+
+The production environment also sets `NEXT_PUBLIC_DISABLE_SIGNUP=true`. Normal account registration is therefore rejected unless an inherited invite flow explicitly permits it.
+
+Relevant files:
+
+- [`apps/web/app/api/auth/setup/route.ts`](./apps/web/app/api/auth/setup/route.ts)
+- [`apps/web/app/api/auth/signup/route.ts`](./apps/web/app/api/auth/signup/route.ts)
+- [`apps/web/app/(use-page-wrapper)/onboarding/getting-started/page.tsx`](<./apps/web/app/(use-page-wrapper)/onboarding/getting-started/page.tsx>)
+- [`packages/features/auth/lib/onboardingUtils.ts`](./packages/features/auth/lib/onboardingUtils.ts)
+- [`packages/features/onboarding/lib/onboarding-path.service.ts`](./packages/features/onboarding/lib/onboarding-path.service.ts)
+
+### Branding
+
+Branding is controlled by environment variables and local assets:
+
+- `NEXT_PUBLIC_APP_NAME=Schiceya Cal`
+- `NEXT_PUBLIC_COMPANY_NAME=Schiceya`
+- `EMAIL_FROM_NAME=Schiceya Cal`
+- `NEXT_PUBLIC_SENDER_ID`
+- [`apps/web/public/schiceya-cal-icon.svg`](./apps/web/public/schiceya-cal-icon.svg)
+- [`apps/web/public/schiceya-cal-wordmark.svg`](./apps/web/public/schiceya-cal-wordmark.svg)
+- [`packages/lib/constants.ts`](./packages/lib/constants.ts)
+- [`packages/ui/components/logo/Logo.tsx`](./packages/ui/components/logo/Logo.tsx)
+
+## User journeys
+
+### Initial owner setup
+
+```mermaid
+flowchart LR
+    A["Fresh database"] --> B["Open /auth/setup"]
+    B --> C["Create first account"]
+    C --> D["Account receives ADMIN role"]
+    D --> E["Sign in"]
+    E --> F["Personal settings onboarding"]
+    F --> G["Connect calendars"]
+    G --> H["Create availability and event types"]
+```
+
+### Create a context-aware event type
+
+```mermaid
+flowchart LR
+    A["CreateEventTypeForm"] --> B["Validate with Zod schema"]
+    B --> C["eventTypes heavy create tRPC handler"]
+    C --> D["Parse booking contexts"]
+    D --> E["Generate booking fields and event title template"]
+    E --> F["Store EventType in Postgres"]
+```
+
+### Public booking
+
+```mermaid
+flowchart LR
+    A["Guest opens booking link"] --> B["Load event type and availability"]
+    B --> C["Check selected calendars for conflicts"]
+    C --> D["Guest selects business"]
+    D --> E["Guest enters meeting reason"]
+    E --> F["Create booking"]
+    F --> G["Write event to destination calendar"]
+    F --> H["Create video meeting if configured"]
+    F --> I["Send email and webhooks if configured"]
+```
+
+## Architecture
+
+### Runtime overview
+
+```mermaid
+flowchart TB
+    Browser["Browser and public booking pages"]
+    Web["Next.js web app<br/>apps/web"]
+    Auth["NextAuth and application authentication"]
+    TRPC["tRPC routers<br/>packages/trpc"]
+    Features["Domain features<br/>packages/features"]
+    Prisma["Prisma client and schema<br/>packages/prisma"]
+    Neon["Neon PostgreSQL"]
+    Apps["Integration packages<br/>packages/app-store"]
+    Providers["Calendar, video, email, payment, CRM and webhook providers"]
+
+    Browser --> Web
+    Web --> Auth
+    Web --> TRPC
+    TRPC --> Features
+    Features --> Prisma
+    Prisma --> Neon
+    Features --> Apps
+    Apps --> Providers
+```
+
+### Responsibility boundaries
+
+| Layer | Responsibility |
+| --- | --- |
+| `apps/web/app` | Next.js App Router pages, layouts, route handlers, metadata, and server entry points |
+| `apps/web/modules` | Web-specific views and user-interface flows |
+| `packages/trpc/server` | Authenticated and public application procedures, routers, and request orchestration |
+| `packages/features` | Domain logic for bookings, calendars, availability, event types, onboarding, users, and more |
+| `packages/prisma` | Prisma schema, generated client, migrations, seeds, and database utilities |
+| `packages/app-store` | Provider integrations and app metadata |
+| `packages/ui` and `packages/coss-ui` | Shared interface components and design primitives |
+| `packages/lib` | Shared constants, authentication helpers, logging, utilities, and server configuration |
+| `packages/emails` | Transactional email templates and sending logic |
+| `packages/embeds` | Booking embed libraries and snippets |
+| `packages/platform` | Platform SDK, types, constants, and reusable API components |
+
+### Request path
+
+A typical authenticated mutation follows this path:
+
+```text
+React form
+  -> tRPC client
+  -> authenticated tRPC procedure
+  -> router handler
+  -> feature/repository service
+  -> Prisma
+  -> Neon Postgres
+  -> response and UI cache update
+```
+
+A booking may additionally call calendar, conferencing, email, payment, CRM, analytics, and webhook providers, depending on the event type and installed credentials.
+
+## Repository structure
+
+This is a Yarn workspaces and Turborepo monorepo.
+
+```text
+.
+|-- apps/
+|   |-- web/                 Main Next.js application deployed to Vercel
+|   |-- api/                 Small development proxy for API workflows
+|   |-- api/v2/              Separate NestJS platform API service
+|   `-- docs/                Nextra documentation application
+|-- packages/
+|   |-- app-store/           Provider integrations
+|   |-- app-store-cli/       App-store development tooling
+|   |-- config/              Shared configuration
+|   |-- coss-ui/             Additional UI package
+|   |-- dayjs/               Shared date/time setup
+|   |-- debugging/           Debugging helpers
+|   |-- emails/              Email templates and mail logic
+|   |-- embeds/              Embed packages
+|   |-- features/            Domain modules
+|   |-- i18n/                Localization utilities
+|   |-- kysely/              Typed SQL support
+|   |-- lib/                 Shared application utilities
+|   |-- platform/            Platform SDK and API packages
+|   |-- prisma/              Schema, migrations, generated client, seeds
+|   |-- sms/                 SMS-related logic
+|   |-- testing/             Shared test utilities
+|   |-- trpc/                Application API routers and procedures
+|   |-- tsconfig/            Shared TypeScript configuration
+|   |-- types/               Shared TypeScript declarations
+|   `-- ui/                  Shared React components
+|-- scripts/                 Repository-level operational scripts
+|-- .env.example             Environment variable reference
+|-- package.json             Workspace scripts and dependency policy
+|-- turbo.json               Task graph and environment inputs
+|-- yarn.lock                Locked dependency graph
+`-- apps/web/vercel.json     Production build, region, and cron settings
+```
+
+Important feature directories include:
+
+- `auth`, `onboarding`, `users`, and `profile`;
+- `eventtypes`, `availability`, `schedules`, `slots`, and `selectedSlots`;
+- `bookings`, `booking-audit`, `bookingReport`, and `noShow`;
+- `calendars`, `selectedCalendar`, `calendar-subscription`, and `busyTimes`;
+- `conferencing`, `credentials`, `webhooks`, and `notifications`;
+- `ooo`, `holidays`, `timezone`, and `travelSchedule`;
+- `form`, `form-builder`, `filters`, `data-table`, and `tasker`;
+- `oauth`, `platform-oauth-client`, and `api-keys-legacy`.
+
+At the time of this audit, the web App Router contains 79 `page.tsx` files and 39 `route.ts` files. These counts are descriptive, not contractual, and will change as the project evolves.
+
+## Data model
+
+The canonical schema is [`packages/prisma/schema.prisma`](./packages/prisma/schema.prisma). Migrations live in [`packages/prisma/migrations`](./packages/prisma/migrations).
+
+Major model groups include:
+
+| Domain | Representative models |
+| --- | --- |
+| Identity and authentication | `User`, `UserPassword`, `Account`, `Session`, `VerificationToken`, `ResetPasswordRequest` |
+| Authorization | `Role`, `RolePermission`, `Membership`, `ApiKey`, `OAuthClient` |
+| Scheduling | `EventType`, `Schedule`, `Availability`, `SelectedSlots`, `TravelSchedule` |
+| Bookings | `Booking`, `Attendee`, `BookingReference`, `BookingSeat`, `Payment`, `Tracking` |
+| Calendars | `Credential`, `SelectedCalendar`, `DestinationCalendar`, `CalendarCache`, `CalendarCacheEvent` |
+| Teams and organizations | `Team`, `Profile`, `OrganizationSettings`, `ManagedOrganization`, `TeamFeatures` |
+| Time away | `OutOfOfficeEntry`, `OutOfOfficeReason`, `UserHolidaySettings`, `HolidayCache` |
+| Integrations and automation | `App`, `Webhook`, `WebhookScheduledTriggers`, `Task`, `PlatformOAuthClient` |
+| Reporting and audit | `BookingAudit`, `BookingReport`, `WrongAssignmentReport`, `WatchlistAudit` |
+| Product configuration | `Feature`, `UserFeatures`, `Deployment`, `FilterSegment`, `InternalNotePreset` |
+
+All schema changes must be represented by a Prisma migration. Do not edit production tables manually unless performing a documented recovery operation.
+
+## Technology stack
+
+The main web application uses:
+
+- Node.js, with Node 20.9 or newer required by Next.js 16;
+- Yarn 4.12.0, pinned in the repository;
+- Turborepo 2.7;
+- Next.js 16;
+- React 18;
+- TypeScript 5.9;
+- tRPC;
+- Prisma 6;
+- PostgreSQL, hosted on Neon in production;
+- NextAuth 4;
+- Zod and React Hook Form;
+- TanStack Query;
+- Tailwind CSS 4;
+- Vitest and Testing Library;
+- Playwright;
+- Biome.
+
+For local development, Node 20.17 LTS or a version matching the Vercel runtime is recommended. The production deployment currently uses a Node 24 runtime.
+
+## Local development
 
 ### Prerequisites
 
-Here’s what you need to run Cal.diy.
+- Git
+- Node.js 20.17 or newer
+- Corepack
+- Docker Desktop for the easiest local PostgreSQL setup, or access to a PostgreSQL 13+ database
+- Optional: MailHog or another SMTP service for email testing
 
-- Node.js (Version: >=18.x)
-- PostgreSQL (Version: >=13.x)
-- Yarn _(recommended)_
+On Windows, WSL or Git Bash gives the best compatibility because some inherited scripts use Unix-style environment assignment and commands.
 
-> If you want to enable any of the available integrations, you may want to obtain additional credentials for each one. More details on this can be found below under the [integrations section](#integrations).
+### Install
 
-## Development
-
-### Setup
-
-1. Clone the repo (or fork https://github.com/calcom/cal.diy/fork)
-
-   ```sh
-   git clone https://github.com/calcom/cal.diy.git
-   ```
-
-   > If you are on Windows, run the following command in Git Bash with admin privileges:
-   > `git clone -c core.symlinks=true https://github.com/calcom/cal.diy.git`
-
-2. Go to the project folder
-
-   ```sh
-   cd cal.diy
-   ```
-
-3. Install packages with yarn
-
-   ```sh
-   yarn
-   ```
-
-4. Set up your `.env` file
-
-   - Duplicate `.env.example` to `.env`
-   - Use `openssl rand -base64 32` to generate a key and add it under `NEXTAUTH_SECRET` in the `.env` file.
-   - Use `openssl rand -base64 24` to generate a key and add it under `CALENDSO_ENCRYPTION_KEY` in the `.env` file.
-
- > **Windows users:** Replace the `packages/prisma/.env` symlink with a real copy to avoid a Prisma error (`unexpected character / in variable name`):
- >
- > ```sh
- > # Git Bash / WSL
- > rm packages/prisma/.env && cp .env packages/prisma/.env
- > ```
-
-5. Set up Node
-   If your Node version does not meet the project's requirements as instructed by the docs, "nvm" (Node Version Manager) allows using Node at the version required by the project:
-
-   ```sh
-   nvm use
-   ```
-
-   You first might need to install the specific version and then use it:
-
-   ```sh
-   nvm install && nvm use
-   ```
-
-   You can install nvm from [here](https://github.com/nvm-sh/nvm).
-
-#### Quick start with `yarn dx`
-
-> - **Requires Docker and Docker Compose to be installed**
-> - Will start a local Postgres instance with a few test users - the credentials will be logged in the console
-
-```sh
-yarn dx
+```bash
+git clone https://github.com/cyberjessai-lab/schiceya-cal.git
+cd schiceya-cal
+corepack enable
+yarn install --immutable
 ```
 
-**Default credentials created:**
+The repository pins Yarn through `.yarnrc.yml`, so using `npm install` or generating a different lockfile is not supported.
 
-| Email | Password | Role |
-|-------|----------|------|
-| `free@example.com` | `free` | Free user |
-| `pro@example.com` | `pro` | Pro user |
-| `trial@example.com` | `trial` | Trial user |
-| `admin@example.com` | `ADMINadmin2022!` | Admin user |
-| `onboarding@example.com` | `onboarding` | Onboarding incomplete |
+### Configure the environment
 
-You can use any of these credentials to sign in at [http://localhost:3000](http://localhost:3000)
-
-> **Tip**: To view the full list of seeded users and their details, run `yarn db-studio` and visit [http://localhost:5555](http://localhost:5555)
-
-#### Development tip
-
-1. Add `export NODE_OPTIONS="--max-old-space-size=16384"` to your shell script to increase the memory limit for the node process. Alternatively, you can run this in your terminal before running the app. Replace 16384 with the amount of RAM you want to allocate to the node process.
-
-2. Add `NEXT_PUBLIC_LOGGER_LEVEL={level}` to your .env file to control the logging verbosity for all tRPC queries and mutations.\
-   Where {level} can be one of the following:
-
-   `0` for silly \
-   `1` for trace \
-   `2` for debug \
-   `3` for info \
-   `4` for warn \
-   `5` for error \
-   `6` for fatal
-
-   When you set `NEXT_PUBLIC_LOGGER_LEVEL={level}` in your .env file, it enables logging at that level and higher. Here's how it works:
-
-   The logger will include all logs that are at the specified level or higher. For example: \
-
-   - If you set `NEXT_PUBLIC_LOGGER_LEVEL=2`, it will log from level 2 (debug) upwards, meaning levels 2 (debug), 3 (info), 4 (warn), 5 (error), and 6 (fatal) will be logged. \
-   - If you set `NEXT_PUBLIC_LOGGER_LEVEL=3`, it will log from level 3 (info) upwards, meaning levels 3 (info), 4 (warn), 5 (error), and 6 (fatal) will be logged, but level 2 (debug) and level 1 (trace) will be ignored. \
-
-```sh
-echo 'NEXT_PUBLIC_LOGGER_LEVEL=3' >> .env
+```bash
+cp .env.example .env
 ```
 
-for Logger level to be set at info, for example.
+At minimum, set the database URLs, application URLs, authentication secret, encryption key, and cron secrets described in [Environment variables](#environment-variables).
 
-#### Gitpod Setup
+For local development:
 
-1. Click the button below to open this project in Gitpod.
+```env
+NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000
+NEXT_PUBLIC_WEBSITE_URL=http://localhost:3000
+NEXT_PUBLIC_EMBED_LIB_URL=http://localhost:3000/embed/embed.js
+NEXTAUTH_URL=http://localhost:3000
+NEXT_PUBLIC_APP_NAME="Schiceya Cal"
+NEXT_PUBLIC_COMPANY_NAME="Schiceya"
+NEXT_PUBLIC_DISABLE_SIGNUP=true
+```
 
-2. This will open a fully configured workspace in your browser with all the necessary dependencies already installed.
+Use real generated secrets in `.env`; never reuse the examples shown in `.env.example` for production.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/calcom/cal.diy)
+### Start local infrastructure
 
-#### Manual setup
+The simplest option is to point `DATABASE_URL` and `DATABASE_DIRECT_URL` to a dedicated Neon development branch.
 
-1. Configure environment variables in the `.env` file. Replace `<user>`, `<pass>`, `<db-host>`, and `<db-port>` with their applicable values
+For a local database matching the default port and database name in `.env.example`, start standalone development containers:
 
-   ```
-   DATABASE_URL='postgresql://<user>:<pass>@<db-host>:<db-port>'
-   ```
+```bash
+docker run --name schiceya-postgres \
+  -e POSTGRES_HOST_AUTH_METHOD=trust \
+  -e POSTGRES_DB=calendso \
+  -p 5450:5432 \
+  -d postgres:18
 
-   <details>
-   <summary>If you don't know how to configure the DATABASE_URL, then follow the steps here to create a quick local DB</summary>
+docker run --name schiceya-redis \
+  -p 6379:6379 \
+  -d redis:7
+```
 
-   1. [Download](https://www.postgresql.org/download/) and install PostgreSQL locally (if you don't have it already).
+The root [`docker-compose.yml`](./docker-compose.yml) is intended for running the full containerized application stack, not only the database for a host-based `yarn dev` process.
 
-   2. Create your own local db by executing `createDB <DB name>`
+### Prepare the database
 
-   3. Now open your psql shell with the DB you created: `psql -h localhost -U postgres -d <DB name>`
-
-   4. Inside the psql shell execute `\conninfo`. And you will get the following info.
-      ![image](https://user-images.githubusercontent.com/39329182/236612291-51d87f69-6dc1-4a23-bf4d-1ca1754e0a35.png)
-
-   5. Now extract all the info and add it to your DATABASE_URL. The url would look something like this
-      `postgresql://postgres:postgres@localhost:5432/Your-DB-Name`. The port is configurable and does not have to be 5432.
-
-   </details>
-
-   If you don't want to create a local DB. Then you can also consider using services like railway.app, Northflank or render.
-
-   - [Setup postgres DB with railway.app](https://docs.railway.app/guides/postgresql)
-   - [Setup postgres DB with Northflank](https://northflank.com/guides/deploy-postgres-database-on-northflank)
-   - [Setup postgres DB with render](https://render.com/docs/databases)
-
-2. Copy and paste your `DATABASE_URL` from `.env` to `.env.appStore`.
-
-3. Set up the database using the Prisma schema (found in `packages/prisma/schema.prisma`)
-
-   In a development environment, run:
-
-   ```sh
-   yarn workspace @calcom/prisma db-migrate
-   ```
-
-   In a production environment, run:
-
-   ```sh
-   yarn workspace @calcom/prisma db-deploy
-   ```
-
-4. Run [mailhog](https://github.com/mailhog/MailHog) to view emails sent during development
-
-   > **_NOTE:_** Required when `E2E_TEST_MAILHOG_ENABLED` is "1"
-
-   ```sh
-   docker pull mailhog/mailhog
-   docker run -d -p 8025:8025 -p 1025:1025 mailhog/mailhog
-   ```
-
-5. Run (in development mode)
-
-   ```sh
-   yarn dev
-   ```
-
-#### Setting up your first user
-
-##### Approach 1
-
-1. Open [Prisma Studio](https://prisma.io/studio) to look at or modify the database content:
-
-   ```sh
-   yarn db-studio
-   ```
-
-1. Click on the `User` model to add a new user record.
-1. Fill out the fields `email`, `username`, `password`, and set `metadata` to empty `{}` (remembering to encrypt your password with [BCrypt](https://bcrypt-generator.com/)) and click `Save 1 Record` to create your first user.
-   > New users are set on a `TRIAL` plan by default. You might want to adjust this behavior to your needs in the `packages/prisma/schema.prisma` file.
-1. Open a browser to [http://localhost:3000](http://localhost:3000) and login with your just created, first user.
-
-##### Approach 2
-
-Seed the local db by running
-
-```sh
-cd packages/prisma
+```bash
+yarn workspace @calcom/prisma db-deploy
 yarn db-seed
 ```
 
-The above command will populate the local db with dummy users.
+For a clean private installation, seeding may create sample or test data that you do not want. If the goal is to exercise the real first-user `/auth/setup` flow, deploy migrations to an empty database and do not run the general seed.
 
-### E2E-Testing
+### Start the web application
 
-Be sure to set the environment variable `NEXTAUTH_URL` to the correct value. If you are running locally, as the documentation within `.env.example` mentions, the value should be `http://localhost:3000`.
-
-```sh
-# In a terminal just run:
-yarn test-e2e
-
-# To open the last HTML report run:
-yarn playwright show-report test-results/reports/playwright-html-report
+```bash
+yarn dev
 ```
 
-#### Resolving issues
-
-##### E2E test browsers not installed
-
-Run `npx playwright install` to download test browsers and resolve the error below when running `yarn test-e2e`:
-
-```
-Executable doesn't exist at /Users/alice/Library/Caches/ms-playwright/chromium-1048/chrome-mac/Chromium.app/Contents/MacOS/Chromium
-```
-
-### Upgrading from earlier versions
-
-1. Pull the current version:
-
-   ```sh
-   git pull
-   ```
-
-1. Check if dependencies got added/updated/removed
-
-   ```sh
-   yarn
-   ```
-
-1. Apply database migrations by running <b>one of</b> the following commands:
-
-   In a development environment, run:
-
-   ```sh
-   yarn workspace @calcom/prisma db-migrate
-   ```
-
-   (This can clear your development database in some cases)
-
-   In a production environment, run:
-
-   ```sh
-   yarn workspace @calcom/prisma db-deploy
-   ```
-
-1. Check for `.env` variables changes
-
-   ```sh
-   yarn predev
-   ```
-
-1. Start the server. In a development environment, just do:
-
-   ```sh
-   yarn dev
-   ```
-
-   For a production build, run for example:
-
-   ```sh
-   yarn build
-   yarn start
-   ```
-
-1. Enjoy the new version.
-
-<!-- DEPLOYMENT -->
-
-## Deployment
-
-### Docker
-
-The Docker image can be found on DockerHub at [https://hub.docker.com/r/calcom/cal.diy](https://hub.docker.com/r/calcom/cal.diy).
-
-**Note for ARM Users**: Use the {version}-arm suffix for pulling images. Example: `docker pull calcom/cal.diy:v5.6.19-arm`.
-
-#### Requirements
-
-Make sure you have `docker` & `docker compose` installed on the server / system. Both are installed by most docker utilities, including Docker Desktop and Rancher Desktop.
-
-Note: `docker compose` without the hyphen is now the primary method of using docker-compose, per the Docker documentation.
-
-#### Running Cal.diy with Docker Compose
-
-1. Clone the repository
-
-   ```bash
-   git clone --recursive https://github.com/calcom/cal.diy.git
-   ```
-
-2. Change into the directory
-
-   ```bash
-   cd cal.diy
-   ```
-
-3. Prepare your configuration: Rename `.env.example` to `.env` and then update `.env`
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   Most configurations can be left as-is, but for configuration options see [Important Run-time variables](#important-run-time-variables) below.
-
-   **Required Secret Keys**
-
-   Before starting, you must generate secure values for `NEXTAUTH_SECRET` and `CALENDSO_ENCRYPTION_KEY`. Using the default `secret` placeholder in production is a security risk.
-
-   Generate `NEXTAUTH_SECRET` (cookie encryption key):
-
-   ```bash
-   openssl rand -base64 32
-   ```
-
-   Generate `CALENDSO_ENCRYPTION_KEY` (must be 32 bytes for AES256):
-
-   ```bash
-   openssl rand -base64 24
-   ```
-
-   Update your `.env` file with these values:
-
-   ```env
-   NEXTAUTH_SECRET=<your_generated_secret>
-   CALENDSO_ENCRYPTION_KEY=<your_generated_key>
-   ```
-
-   **Push Notifications (VAPID Keys)**
-   If you see an error like:
-
-   ```
-   Error: No key set vapidDetails.publicKey
-   ```
-
-   This means your environment variables for Web Push are missing.
-   You must generate and set `NEXT_PUBLIC_VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`.
-
-   Generate them with:
-
-   ```bash
-   npx web-push generate-vapid-keys
-   ```
-
-   Then update your `.env` file:
-
-   ```env
-   NEXT_PUBLIC_VAPID_PUBLIC_KEY=your_public_key_here
-   VAPID_PRIVATE_KEY=your_private_key_here
-   ```
-
-   Do **not** commit real keys to `.env.example` — only placeholders.
-
-   Update the appropriate values in your .env file, then proceed.
-
-4. (optional) Pre-Pull the images by running the following command:
-
-   ```bash
-   docker compose pull
-   ```
-
-5. Start Cal.diy via docker compose
-
-   To run the complete stack, which includes a local Postgres database, Cal.diy web app, and Prisma Studio:
-
-   ```bash
-   docker compose up -d
-   ```
-
-   To run Cal.diy web app and Prisma Studio against a remote database, ensure that DATABASE_URL is configured for an available database and run:
-
-   ```bash
-   docker compose up -d calcom studio
-   ```
-
-   To run only the Cal.diy web app, ensure that DATABASE_URL is configured for an available database and run:
-
-   ```bash
-   docker compose up -d calcom
-   ```
-
-   **Note: to run in attached mode for debugging, remove `-d` from your desired run command.**
-
-6. Open a browser to [http://localhost:3000](http://localhost:3000), or your defined NEXT_PUBLIC_WEBAPP_URL. The first time you run Cal.diy, a setup wizard will initialize. Define your first user, and you're ready to go!
-
-   **Note for first-time setup (Calendar integration)**: During the setup wizard, you may encounter a "Connect your Calendar" step that appears to be required. If you do not wish to connect a calendar at this time, you can skip this step by navigating directly to the dashboard at `<NEXT_PUBLIC_WEBAPP_URL>/event-types`. Calendar integrations can be added later from the Settings > Integrations page.
-
-#### Updating Cal.diy
-
-1. Stop the Cal.diy stack
-
-   ```bash
-   docker compose down
-   ```
-
-2. Pull the latest changes
-
-   ```bash
-   docker compose pull
-   ```
-
-3. Update env vars as necessary.
-4. Re-start the Cal.diy stack
-
-   ```bash
-   docker compose up -d
-   ```
-
-#### Building from source with Docker
-
-1. Clone the repository
-
-   ```bash
-   git clone https://github.com/calcom/cal.diy.git
-   ```
-
-2. Change into the directory
-
-   ```bash
-   cd cal.diy
-   ```
-
-3. Rename `.env.example` to `.env` and then update `.env`
-
-   For configuration options see [Build-time variables](#build-time-variables) below. Update the appropriate values in your .env file, then proceed.
-
-4. Build the Cal.diy docker image:
-
-   Note: Due to application configuration requirements, an available database is currently required during the build process.
-
-   a) If hosting elsewhere, configure the `DATABASE_URL` in the .env file, and skip the next step
-
-   b) If a local or temporary database is required, start a local database via docker compose.
-
-   ```bash
-   docker compose up -d database
-   ```
-
-5. Build Cal.diy via docker compose (DOCKER_BUILDKIT=0 must be provided to allow a network bridge to be used at build time. This requirement will be removed in the future)
-
-   ```bash
-   DOCKER_BUILDKIT=0 docker compose build calcom
-   ```
-
-6. Start Cal.diy via docker compose
-
-   To run the complete stack, which includes a local Postgres database, Cal.diy web app, and Prisma Studio:
-
-   ```bash
-   docker compose up -d
-   ```
-
-   To run Cal.diy web app and Prisma Studio against a remote database, ensure that DATABASE_URL is configured for an available database and run:
-
-   ```bash
-   docker compose up -d calcom studio
-   ```
-
-   To run only the Cal.diy web app, ensure that DATABASE_URL is configured for an available database and run:
-
-   ```bash
-   docker compose up -d calcom
-   ```
-
-   **Note: to run in attached mode for debugging, remove `-d` from your desired run command.**
-
-7. Open a browser to [http://localhost:3000](http://localhost:3000), or your defined NEXT_PUBLIC_WEBAPP_URL. The first time you run Cal.diy, a setup wizard will initialize. Define your first user, and you're ready to go!
-
-#### Configuration
-
-##### Important Run-time variables
-
-These variables must also be provided at runtime
-
-| Variable | Description | Required | Default |
-| --- | --- | --- | --- |
-| DATABASE_URL | database url with credentials - if using a connection pooler, this setting should point there | required | `postgresql://unicorn_user:magical_password@database:5432/calendso` |
-| NEXT_PUBLIC_WEBAPP_URL | Base URL of the site. NOTE: if this value differs from the value used at build-time, there will be a slight delay during container start (to update the statically built files). | optional | `http://localhost:3000` |
-| NEXTAUTH_URL | Location of the auth server. By default, this is the Cal.diy docker instance itself. | optional | `{NEXT_PUBLIC_WEBAPP_URL}/api/auth` |
-| NEXTAUTH_SECRET | Cookie encryption key. Must match build variable. Generate with: `openssl rand -base64 32` | required | `secret` |
-| CALENDSO_ENCRYPTION_KEY | Authentication encryption key (32 bytes for AES256). Must match build variable. Generate with: `openssl rand -base64 24` | required | `secret` |
-
-##### Build-time variables
-
-If building the image yourself, these variables must be provided at the time of the docker build, and can be provided by updating the .env file. Currently, if you require changes to these variables, you must follow the instructions to build and publish your own image.
-
-| Variable | Description | Required | Default |
-| --- | --- | --- | --- |
-| DATABASE_URL | database url with credentials - if using a connection pooler, this setting should point there | required | `postgresql://unicorn_user:magical_password@database:5432/calendso` |
-| MAX_OLD_SPACE_SIZE | Needed for Nodejs/NPM build options | required | 4096 |
-| NEXTAUTH_SECRET | Cookie encryption key | required | `secret` |
-| CALENDSO_ENCRYPTION_KEY | Authentication encryption key | required | `secret` |
-| NEXT_PUBLIC_WEBAPP_URL | Base URL injected into static files | optional | `http://localhost:3000` |
-| NEXT_PUBLIC_WEBSITE_TERMS_URL | custom URL for terms and conditions website | optional | |
-| NEXT_PUBLIC_WEBSITE_PRIVACY_POLICY_URL | custom URL for privacy policy website | optional | |
-| CALCOM_TELEMETRY_DISABLED | Allow Cal.diy to collect anonymous usage data (set to `1` to disable) | optional | |
-
-#### Troubleshooting
-
-##### SSL edge termination
-
-If running behind a load balancer which handles SSL certificates, you will need to add the environmental variable `NODE_TLS_REJECT_UNAUTHORIZED=0` to prevent requests from being rejected. Only do this if you know what you are doing and trust the services/load-balancers directing traffic to your service.
-
-##### Failed to commit changes: Invalid 'prisma.user.create()'
-
-Certain versions may have trouble creating a user if the field `metadata` is empty. Using an empty json object `{}` as the field value should resolve this issue. Also, the `id` field will autoincrement, so you may also try leaving the value of `id` as empty.
-
-##### CLIENT_FETCH_ERROR
-
-If you experience this error, it may be the way the default Auth callback in the server is using the WEBAPP_URL as a base url. The container does not necessarily have access to the same DNS as your local machine, and therefore needs to be configured to resolve to itself. You may be able to correct this by configuring `NEXTAUTH_URL=http://localhost:3000/api/auth`, to help the backend loop back to itself.
-
-```
-docker-calcom-1  | @calcom/web:start: [next-auth][error][CLIENT_FETCH_ERROR]
-docker-calcom-1  | @calcom/web:start: https://next-auth.js.org/errors#client_fetch_error request to http://testing.localhost:3000/api/auth/session failed, reason: getaddrinfo ENOTFOUND testing.localhost {
-docker-calcom-1  | @calcom/web:start:   error: {
-docker-calcom-1  | @calcom/web:start:     message: 'request to http://testing.localhost:3000/api/auth/session failed, reason: getaddrinfo ENOTFOUND testing.localhost',
-docker-calcom-1  | @calcom/web:start:     stack: 'FetchError: request to http://testing.localhost:3000/api/auth/session failed, reason: getaddrinfo ENOTFOUND testing.localhost\n' +
-docker-calcom-1  | @calcom/web:start:       '    at ClientRequest.<anonymous> (/calcom/node_modules/next/dist/compiled/node-fetch/index.js:1:65756)\n' +
-docker-calcom-1  | @calcom/web:start:       '    at ClientRequest.emit (node:events:513:28)\n' +
-docker-calcom-1  | @calcom/web:start:       '    at ClientRequest.emit (node:domain:489:12)\n' +
-docker-calcom-1  | @calcom/web:start:       '    at Socket.socketErrorListener (node:_http_client:494:9)\n' +
-docker-calcom-1  | @calcom/web:start:       '    at Socket.emit (node:events:513:28)\n' +
-docker-calcom-1  | @calcom/web:start:       '    at Socket.emit (node:domain:489:12)\n' +
-docker-calcom-1  | @calcom/web:start:       '    at emitErrorNT (node:internal/streams/destroy:157:8)\n' +
-docker-calcom-1  | @calcom/web:start:       '    at emitErrorCloseNT (node:internal/streams/destroy:122:3)\n' +
-docker-calcom-1  | @calcom/web:start:       '    at processTicksAndRejections (node:internal/process/task_queues:83:21)',
-docker-calcom-1  | @calcom/web:start:     name: 'FetchError'
-docker-calcom-1  | @calcom/web:start:   },
-docker-calcom-1  | @calcom/web:start:   url: 'http://testing.localhost:3000/api/auth/session',
-docker-calcom-1  | @calcom/web:start:   message: 'request to http://testing.localhost:3000/api/auth/session failed, reason: getaddrinfo ENOTFOUND testing.localhost'
-docker-calcom-1  | @calcom/web:start: }
+Open [http://localhost:3000](http://localhost:3000).
+
+If the database has no users, open [http://localhost:3000/auth/setup](http://localhost:3000/auth/setup) and create the first administrator.
+
+### Common commands
+
+| Command | Purpose |
+| --- | --- |
+| `yarn dev` | Run the main web app in development mode |
+| `yarn build` | Build the web app and its workspace dependencies |
+| `yarn start` | Start a previously built web app |
+| `yarn type-check` | Run TypeScript checks across the task graph |
+| `yarn lint` | Run Biome lint tasks |
+| `yarn format` | Format the repository with Biome |
+| `yarn test` | Run the Vitest suite in UTC |
+| `yarn e2e` | Run Playwright web tests |
+| `yarn test-e2e` | Seed the database, then run Playwright |
+| `yarn db-deploy` | Deploy pending Prisma migrations |
+| `yarn db-seed` | Seed the database |
+| `yarn db-studio` | Open Prisma Studio |
+| `yarn prisma <args>` | Run Prisma CLI commands in the Prisma workspace |
+| `yarn dev:api` | Run the web app and API proxy task graph |
+
+## Environment variables
+
+The full reference is [`.env.example`](./.env.example). The groups below explain the values that matter most to Schiceya Cal.
+
+### Required application variables
+
+| Variable | Purpose |
+| --- | --- |
+| `DATABASE_URL` | Pooled PostgreSQL connection used by the application |
+| `DATABASE_DIRECT_URL` | Direct PostgreSQL connection used by Prisma migrations |
+| `NEXT_PUBLIC_WEBAPP_URL` | Public origin of the web application |
+| `NEXT_PUBLIC_WEBSITE_URL` | Public website origin, usually the same as the web app |
+| `NEXT_PUBLIC_EMBED_LIB_URL` | Public URL of the generated embed script |
+| `NEXTAUTH_URL` | NextAuth base URL; production currently uses the deployed auth URL |
+| `NEXTAUTH_SECRET` | Signs and encrypts authentication data |
+| `CALENDSO_ENCRYPTION_KEY` | Encrypts stored integration credentials |
+| `CRON_API_KEY` | Legacy/query-header authorization for supported cron handlers |
+| `CRON_SECRET` | Bearer token used by Vercel Cron and task endpoints |
+
+### Branding and private-mode variables
+
+| Variable | Recommended value | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_APP_NAME` | `Schiceya Cal` | Product name in the interface |
+| `NEXT_PUBLIC_COMPANY_NAME` | `Schiceya` | Company/owner brand |
+| `NEXT_PUBLIC_SENDER_ID` | Your sender identifier | Sender branding where supported |
+| `EMAIL_FROM_NAME` | `Schiceya Cal` | Display name on email |
+| `NEXT_PUBLIC_DISABLE_SIGNUP` | `true` | Blocks normal public registration |
+| `CALCOM_TELEMETRY_DISABLED` | `1` | Disables upstream telemetry |
+| `CRON_ENABLE_APP_SYNC` | `false` | Prevents unnecessary app-sync cron work for this deployment |
+
+Variables beginning with `NEXT_PUBLIC_` are exposed to browser bundles and are often captured at build time. Never put secrets in them.
+
+### Email
+
+Email is optional for basic local interface testing, but production booking notifications, verification, and password recovery require a working provider.
+
+Use either:
+
+- `RESEND_API_KEY`, or
+- `EMAIL_SERVER_HOST`, `EMAIL_SERVER_PORT`, `EMAIL_SERVER_USER`, and `EMAIL_SERVER_PASSWORD`.
+
+Also configure `EMAIL_FROM` and `EMAIL_FROM_NAME`.
+
+Without a valid email transport:
+
+- booking emails may not be delivered;
+- password-reset messages may not be delivered;
+- verification and reminder workflows may fail or log warnings.
+
+### Generate secrets
+
+Examples using OpenSSL:
+
+```bash
+openssl rand -base64 32
+openssl rand -base64 24
+openssl rand -hex 32
 ```
 
-### Railway
+Use separately generated values for authentication, credential encryption, and cron authorization. Store them in `.env` locally and in Vercel environment variables for production. Do not commit them.
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/cal)
+### Optional integrations
 
-You can deploy Cal.diy on [Railway](https://railway.app). The team at Railway also have a [detailed blog post](https://blog.railway.app/p/calendso) on deploying on their platform.
+Calendar, conferencing, payment, CRM, analytics, messaging, and OAuth integrations each require provider-specific variables. Consult `.env.example` and the corresponding package under `packages/app-store`.
 
-### Northflank
+## Database operations
 
-[![Deploy on Northflank](https://assets.northflank.com/deploy_to_northflank_smm_36700fb050.svg)](https://northflank.com/stacks/deploy-calcom)
+### Connection strategy
 
-You can deploy Cal.diy on [Northflank](https://northflank.com). The team at Northflank also have a [detailed blog post](https://northflank.com/guides/deploy-calcom-with-northflank) on deploying on their platform.
+For Neon:
 
-### Vercel
+- `DATABASE_URL` should normally use the pooled connection string for runtime traffic.
+- `DATABASE_DIRECT_URL` should use the direct connection string for migrations.
+- Keep the database region close to the Vercel function region.
+- Use separate Neon branches or databases for production, preview, development, and destructive testing.
 
-Currently Vercel Pro Plan is required to be able to Deploy this application with Vercel, due to limitations on the number of serverless functions on the free plan.
+### Apply migrations
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcalcom%2Fcal.diy&env=DATABASE_URL,NEXT_PUBLIC_WEBAPP_URL,NEXTAUTH_URL,NEXTAUTH_SECRET,CRON_API_KEY,CALENDSO_ENCRYPTION_KEY&envDescription=See%20all%20available%20env%20vars&envLink=https%3A%2F%2Fgithub.com%2Fcalcom%2Fcal.diy%2Fblob%2Fmain%2F.env.example&project-name=cal&repo-name=cal.diy&build-command=cd%20../..%20%26%26%20yarn%20build&root-directory=apps%2Fweb%2F)
+```bash
+yarn workspace @calcom/prisma db-deploy
+```
 
-### Render
+The Prisma package build also runs [`packages/prisma/auto-migrations.ts`](./packages/prisma/auto-migrations.ts). It attempts `prisma migrate deploy` when both database URLs are available, unless:
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/calcom/docker)
+```env
+SKIP_DB_MIGRATIONS=1
+```
 
-### Elestio
+For controlled production releases, explicitly applying and reviewing migrations is still preferable to relying only on build-time behavior.
 
-[![Deploy on Elestio](https://elest.io/images/logos/deploy-to-elestio-btn.png)](https://elest.io/open-source/cal.com)
+### Create a migration
 
-<!-- LICENSE -->
+Against a development database:
 
-## License
+```bash
+yarn workspace @calcom/prisma prisma migrate dev --name describe_the_change
+```
 
-Cal.diy is fully open source, licensed under the [MIT License](https://opensource.org/license/mit).
+Review the generated SQL before committing it.
 
-Unlike Cal.com's "Open Core" model, Cal.diy has **no commercial/enterprise code**. The entire codebase is available under the same open-source license.
+### Inspect data
 
-## Enabling Content Security Policy
+```bash
+yarn db-studio
+```
 
-- Set CSP_POLICY="non-strict" env variable, which enables [Strict CSP](https://web.dev/strict-csp/) except for `unsafe-inline` in `style-src`. If you have custom changes in your instance, you may need to modify your code to make it CSP-compatible. Currently, strict CSP is enabled only on the login page. On other SSR pages, it is enabled in report-only mode to detect potential issues. It is not yet supported on SSG pages.
+Prisma Studio is a development and administration tool. Do not expose it publicly.
+
+### Backup and recovery
+
+Before high-risk schema or data changes:
+
+1. Confirm Neon point-in-time recovery or branch history is available for the production project.
+2. Create a protected branch or snapshot.
+3. Test the migration against a copy of production data where permitted.
+4. Record the rollback or forward-fix plan.
+5. Verify bookings, users, credentials, event types, and selected calendars after deployment.
+
+## Testing and quality checks
+
+### Schiceya booking-context test
+
+```bash
+yarn vitest run packages/features/eventtypes/lib/bookingContext.test.ts
+```
+
+The focused test verifies:
+
+- required business and reason fields;
+- the event-name template;
+- whitespace trimming;
+- case-insensitive duplicate removal;
+- unchanged behavior when no options are provided.
+
+### Recommended change verification
+
+For a focused Schiceya change:
+
+```bash
+yarn vitest run packages/features/eventtypes/lib/bookingContext.test.ts
+yarn workspace @calcom/web type-check
+yarn workspace @calcom/web lint
+```
+
+For a broader change:
+
+```bash
+yarn type-check
+yarn lint
+yarn test
+yarn build
+```
+
+Run relevant Playwright flows when changing authentication, onboarding, event creation, public booking, rescheduling, cancellation, calendar connections, or payments.
+
+### Manual smoke test
+
+1. Sign in as the administrator.
+2. Create an event type with three business options.
+3. Open its public booking link in a private browser window.
+4. Confirm the business selector and meeting-reason field are required.
+5. Complete a booking.
+6. Confirm the event is stored in Schiceya Cal.
+7. Confirm the destination calendar receives the event.
+8. Confirm the title includes the selected business and reason.
+9. Confirm connected conflict-check calendars block busy slots.
+10. Reschedule and cancel the booking to verify provider synchronization.
+
+## Vercel deployment
+
+The main production app is `apps/web`. Its Vercel settings are defined in [`apps/web/vercel.json`](./apps/web/vercel.json).
+
+### Project settings
+
+Use:
+
+| Setting | Value |
+| --- | --- |
+| Root directory | `apps/web` |
+| Install command | Defined by `apps/web/vercel.json` |
+| Build command | Defined by `apps/web/vercel.json` |
+| Framework | Next.js |
+| Region | `sfo1` |
+
+The custom install command runs from the monorepo root:
+
+```bash
+cd ../.. && yarn install --immutable --mode=skip-build
+```
+
+The custom build command is:
+
+```bash
+cd ../.. && NODE_OPTIONS=--max-old-space-size=8192 yarn build
+```
+
+`--mode=skip-build` prevents workspace post-install scripts from racing before the full build task graph is ready. The build then runs the required generated-package and Prisma tasks in Turborepo order.
+
+The UI icon build uses `--no-errors-on-unmatched` so ignored or absent generated icon files do not fail a clean Vercel build.
+
+### Deploy with Git
+
+The normal production flow is:
+
+1. Commit a reviewed change.
+2. Push it to the GitHub branch connected to Vercel.
+3. Let Vercel create a preview or production deployment.
+4. Review build logs.
+5. Smoke-test authentication, event creation, booking, and calendar delivery.
+
+### Deploy with the CLI
+
+```bash
+corepack enable
+yarn install --immutable
+npx vercel link
+npx vercel pull --yes --environment=production
+npx vercel deploy --prod
+```
+
+Do not download production secrets into a location that can be committed.
+
+### Production environment checklist
+
+- URLs point to the production domain and use HTTPS.
+- `NEXT_PUBLIC_DISABLE_SIGNUP=true`.
+- Neon pooled and direct URLs point to the correct production database.
+- Auth, encryption, and cron secrets are unique and strong.
+- Email transport is configured if email-dependent flows are expected.
+- OAuth callback URLs exactly match the production routes.
+- Preview deployments do not silently connect to the production database.
+- `sfo1` remains appropriate for the selected Neon region.
+
+## Scheduled jobs
+
+All schedules in Vercel are UTC. The current deployment uses daily schedules to remain compatible with Vercel Hobby limits.
+
+| UTC time | Endpoint | Purpose |
+| --- | --- | --- |
+| 00:00 | `/api/cron/calendar-subscriptions` | Maintain calendar subscription state |
+| 01:00 | `/api/tasks/cron` | Process scheduled task work |
+| 02:00 | `/api/tasks/cleanup` | Clean completed or expired task data |
+| 03:00 | `/api/cron/calendar-subscriptions-cleanup` | Remove stale calendar subscription data |
+| 04:00 | `/api/cron/queuedFormResponseCleanup` | Clean queued form responses |
+| 05:00 | `/api/cron/credentials` | Maintain or validate credential-related state |
+| 06:00 | `/api/cron/selected-calendars` | Maintain selected-calendar state |
+
+Vercel sends `Authorization: Bearer <CRON_SECRET>` when `CRON_SECRET` is configured. The handlers also contain compatibility logic for `CRON_API_KEY` where applicable.
+
+If the project moves to a plan or scheduler that supports higher-frequency execution, restore frequencies only after checking each endpoint's cost, idempotency, concurrency behavior, and provider rate limits.
 
 ## Integrations
 
-### Obtaining the Google API Credentials
+Integration packages are located under [`packages/app-store`](./packages/app-store). Categories include:
 
-1. Open [Google API Console](https://console.cloud.google.com/apis/dashboard). If you don't have a project in your Google Cloud subscription, you'll need to create one before proceeding further. Under Dashboard pane, select Enable APIS and Services.
-2. In the search box, type calendar and select the Google Calendar API search result.
-3. Enable the selected API.
-4. Next, go to the [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent) from the side pane. Select the app type (Internal or External) and enter the basic app details on the first page.
-5. In the second page on Scopes, select Add or Remove Scopes. Search for Calendar.event and select the scope with scope value `.../auth/calendar.events`, `.../auth/calendar.readonly` and select Update.
-6. In the third page (Test Users), add the Google account(s) you'll be using. Make sure the details are correct on the last page of the wizard and your consent screen will be configured.
-7. Now select [Credentials](https://console.cloud.google.com/apis/credentials) from the side pane and then select Create Credentials. Select the OAuth Client ID option.
-8. Select Web Application as the Application Type.
-9. Under Authorized redirect URI's, select Add URI and then add the URI `<Cal.diy URL>/api/integrations/googlecalendar/callback` and `<Cal.diy URL>/api/auth/callback/google` replacing Cal.diy URL with the URI at which your application runs.
-10. The key will be created and you will be redirected back to the Credentials page. Select the newly generated client ID under OAuth 2.0 Client IDs.
-11. Select Download JSON. Copy the contents of this file and paste the entire JSON string in the `.env` file as the value for `GOOGLE_API_CREDENTIALS` key.
+| Category | Examples present in the repository |
+| --- | --- |
+| Calendars | Google Calendar, Microsoft 365, Apple Calendar, CalDAV, Exchange, ICS feeds, Zoho Calendar |
+| Video | Google Meet, Microsoft Teams, Zoom, Daily, Jitsi, Webex, Whereby, FaceTime |
+| Payments | Stripe, PayPal, HitPay, BTCPay Server |
+| CRM | HubSpot, Salesforce, Pipedrive, Close, Attio, Zoho CRM |
+| Automation | Zapier, Make, n8n, Pipedream |
+| Analytics | Google Analytics, Google Tag Manager, Plausible, PostHog, Matomo, Umami |
+| Messaging | Discord, Telegram, WhatsApp, Signal-related packages |
 
-#### _Adding google calendar to Cal.diy App Store_
+To enable an integration:
 
-After adding Google credentials, you can now add the Google Calendar app to the App Store.
-You can repopulate the App Store by running
+1. Read its package metadata and implementation.
+2. Create the provider application or credentials.
+3. Configure callback and webhook URLs.
+4. Add only the required environment variables.
+5. Install or enable it from the Schiceya interface.
+6. Test token refresh, booking creation, rescheduling, cancellation, and disconnection.
 
+Do not assume an integration is production-ready merely because its package exists. Some packages may depend on services, licenses, upstream infrastructure, or feature flags not enabled in this fork.
+
+## Security and current limitations
+
+### Private-use boundary
+
+This repository currently contains multiple local `PermissionCheckService` placeholders whose permission checks return `true`, return empty team lists, or otherwise bypass the complete upstream permission service. There is also an API v2 PBAC guard that documents always-allow behavior.
+
+Affected areas include portions of:
+
+- event type access and creation;
+- booking access;
+- webhooks;
+- out-of-office logic;
+- watchlists;
+- user and team profile queries;
+- PBAC procedures;
+- API v2 authorization.
+
+This does not make an unauthenticated visitor an administrator by itself, but it invalidates assumptions required for safe multi-user and multi-tenant authorization. The current safe operating assumption is:
+
+```text
+one trusted administrator + public booking pages + public signup disabled
 ```
-cd packages/prisma
-yarn seed-app-store
+
+Do not create accounts for untrusted users or enable organization/team tenancy until every placeholder is replaced with an actual authorization implementation and tested for horizontal and vertical privilege escalation.
+
+### Secrets
+
+- Never commit `.env`, Vercel exports, database dumps, OAuth credentials, or provider tokens.
+- Treat `NEXTAUTH_SECRET`, `CALENDSO_ENCRYPTION_KEY`, database URLs, cron secrets, and OAuth client secrets as production credentials.
+- Rotate a secret immediately if it appears in Git history, logs, screenshots, or chat.
+- Use different values for local, preview, and production environments.
+- Restrict Neon and Vercel account access with multi-factor authentication.
+
+### Personal and booking data
+
+Bookings may contain names, email addresses, phone numbers, meeting topics, calendar metadata, payment details, and webhook payloads. Before collecting real customer data:
+
+- define retention and deletion practices;
+- configure privacy and terms pages;
+- restrict administrator access;
+- verify backups and recovery;
+- avoid logging sensitive payloads;
+- review provider data-processing agreements;
+- understand applicable privacy, healthcare, or industry requirements.
+
+Schiceya Cal is not automatically compliant with HIPAA, GDPR, POPIA, PCI DSS, or another regulatory framework merely because related code or integration names are present.
+
+### Email and account recovery
+
+With public signup disabled and only one administrator, a failed password-reset email can lock the owner out. Configure and test email delivery, retain secure infrastructure access, and document an emergency database-assisted recovery procedure before relying on the service.
+
+### Dependency and upstream risk
+
+This is a large fork with many dependencies and inherited modules. Regularly:
+
+- review Dependabot or equivalent alerts;
+- run package audits with appropriate judgment;
+- update the fork from Cal.diy carefully;
+- inspect upstream changes before merging;
+- test migrations and authentication after dependency updates.
+
+## Before a public launch
+
+The following work is required before offering Schiceya Cal to the public:
+
+- Replace every permissive permission-service placeholder with a real implementation.
+- Audit all tRPC, route-handler, API v2, webhook, team, and organization authorization paths.
+- Add negative tests proving users cannot access another user's bookings, event types, credentials, teams, webhooks, or reports.
+- Decide whether the product is single-user, multi-user, team-based, or multi-tenant.
+- Re-enable signup intentionally and test invite, verification, password reset, account deletion, and abuse cases.
+- Configure reliable transactional email with domain authentication.
+- Add rate limiting, bot protection, and Vercel Firewall/WAF rules where appropriate.
+- Review OAuth scopes, consent screens, callback URLs, token encryption, and credential deletion.
+- Publish accurate privacy, terms, cookie, support, and security-reporting information.
+- Add monitoring, error tracking, availability checks, log retention rules, and alerting.
+- Verify database backups, point-in-time recovery, restore drills, and tenant-aware deletion.
+- Review payment code and billing UI before enabling paid plans.
+- Review team and organization UI so inherited options do not promise unsupported behavior.
+- Move cron work to appropriate production frequencies and monitor failures.
+- Perform a dedicated security review and penetration test.
+- Load-test booking, availability, calendar sync, and webhook workflows.
+- Establish an incident-response and secret-rotation process.
+
+## Troubleshooting
+
+### `/auth/setup` says no setup is needed
+
+The endpoint only works when the `User` table is empty. Use the normal login page if an owner already exists. Do not delete the production owner just to reopen setup.
+
+### The plan-selection page still appears
+
+Confirm the deployment contains the Schiceya onboarding changes and is not serving an older Vercel build. `/onboarding/getting-started` should redirect to `/onboarding/personal/settings`.
+
+### Signup is still visible or available
+
+Set:
+
+```env
+NEXT_PUBLIC_DISABLE_SIGNUP=true
 ```
 
-You will need to complete a few more steps to activate Google Calendar App.
-Make sure to complete section "Obtaining the Google API Credentials". After that do the
-following
+Because this is a `NEXT_PUBLIC_` variable, redeploy after changing it.
 
-1. Add extra redirect URL `<Cal.diy URL>/api/auth/callback/google`
-1. Under 'OAuth consent screen', click "PUBLISH APP"
+### Business options do not appear on a booking page
 
-### Obtaining Microsoft Graph Client ID and Secret
+Check that:
 
-1. Open [Azure App Registration](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RegisteredApps) and select New registration
-2. Name your application
-3. Set **Who can use this application or access this API?** to **Accounts in any organizational directory (Any Azure AD directory - Multitenant)**
-4. Set the **Web** redirect URI to `<Cal.diy URL>/api/integrations/office365calendar/callback` replacing Cal.diy URL with the URI at which your application runs.
-5. Use **Application (client) ID** as the **MS_GRAPH_CLIENT_ID** attribute value in .env
-6. Click **Certificates & secrets** create a new client secret and use the value as the **MS_GRAPH_CLIENT_SECRET** attribute
+- the event type was newly created after the feature was added;
+- **Business and booking options** was not blank;
+- the event creation request completed successfully;
+- the stored event type has generated `bookingFields`;
+- you are viewing the correct public event type.
 
-### Obtaining Zoom Client ID and Secret
+Existing event types are not automatically migrated.
 
-1. Open [Zoom Marketplace](https://marketplace.zoom.us/) and sign in with your Zoom account.
-2. On the upper right, click "Develop" => "Build App".
-3. Select "General App" , click "Create".
-4. Name your App.
-5. Choose "User-managed app" for "Select how the app is managed".
-6. De-select the option to publish the app on the Zoom App Marketplace, if asked.
-7. Now copy the Client ID and Client Secret to your `.env` file into the `ZOOM_CLIENT_ID` and `ZOOM_CLIENT_SECRET` fields.
-8. Set the "OAuth Redirect URL" under "OAuth Information" as `<Cal.diy URL>/api/integrations/zoomvideo/callback` replacing Cal.diy URL with the URI at which your application runs.
-9. Also add the redirect URL given above as an allow list URL and enable "Subdomain check". Make sure, it says "saved" below the form.
-10. You don't need to provide basic information about your app. Instead click on "Scopes" and then on "+ Add Scopes". On the left,
-    1. click the category "Meeting" and check the scope `meeting:write:meeting`.
-    2. click the category "User" and check the scope `user:read:settings`.
-11. Click "Done".
-12. You're good to go. Now you can easily add your Zoom integration in the Cal.diy settings.
+### Calendar title does not contain the business
 
-### Obtaining Daily API Credentials
+The event type must have:
 
-1. Open [Daily.co](https://daily.co/) and create an account.
-2. From within your dashboard, go to the [developers](https://dashboard.daily.co/developers) tab.
-3. Copy your API key.
-4. Now paste the API key to your `.env` file into the `DAILY_API_KEY` field in your `.env` file.
-5. If you have the [Daily Scale Plan](https://daily.co/pricing) set the `DAILY_SCALE_PLAN` variable to `true` in order to use features like video recording.
+```text
+[{business}] {Scheduler} - {title}
+```
 
-### Obtaining Basecamp Client ID and Secret
+as its event-name template, and the booking must contain both generated fields.
 
-1. Visit the [37 Signals Integrations Dashboard](launchpad.37signals.com/integrations) and sign in.
-2. Register a new application by clicking the Register one now link.
-3. Fill in your company details.
-4. Select Basecamp 4 as the product to integrate with.
-5. Set the Redirect URL for OAuth `<Cal.diy URL>/api/integrations/basecamp3/callback` replacing Cal.diy URL with the URI at which your application runs.
-6. Click on done and copy the Client ID and secret into the `BASECAMP3_CLIENT_ID` and `BASECAMP3_CLIENT_SECRET` fields.
-7. Set the `BASECAMP3_CLIENT_SECRET` env variable to `{your_domain} ({support_email})`.
+### Build fails during icon generation
 
-### Obtaining HubSpot Client ID and Secret
+Confirm [`packages/ui/scripts/build-icons.mjs`](./packages/ui/scripts/build-icons.mjs) includes SVGO's `--no-errors-on-unmatched` behavior and that generated files have not been inconsistently committed.
 
-1. Open [HubSpot Developer](https://developer.hubspot.com/) and sign into your account, or create a new one.
-2. From within the home of the Developer account page, go to "Manage apps".
-3. Click "Create legacy app" button top right and select public app.
-4. Fill in any information you want in the "App info" tab
-5. Go to tab "Auth"
-6. Now copy the Client ID and Client Secret to your `.env` file into the `HUBSPOT_CLIENT_ID` and `HUBSPOT_CLIENT_SECRET` fields.
-7. Set the Redirect URL for OAuth `<Cal.diy URL>/api/integrations/hubspot/callback` replacing Cal.diy URL with the URI at which your application runs.
-8. In the "Scopes" section at the bottom of the page, make sure you select "Read" and "Write" for scopes called `crm.objects.contacts` and `crm.lists`.
-9. Click the "Save" button at the bottom footer.
-10. You're good to go. Now you can see any booking in Cal.diy created as a meeting in HubSpot for your contacts.
+### Vercel build runs out of memory
 
-### Obtaining Webex Client ID and Secret
+Keep the configured build command with:
 
-[See Webex Readme](./packages/app-store/webex/)
+```text
+NODE_OPTIONS=--max-old-space-size=8192
+```
 
-### Obtaining ZohoCRM Client ID and Secret
+Also check for duplicated dependency installs, accidental build artifacts, and changes that expand the Turborepo task graph.
 
-1. Open [Zoho API Console](https://api-console.zoho.com/) and sign into your account, or create a new one.
-2. From within the API console page, go to "Applications".
-3. Click "ADD CLIENT" button top right and select "Server-based Applications".
-4. Fill in any information you want in the "Client Details" tab
-5. Go to tab "Client Secret" tab.
-6. Now copy the Client ID and Client Secret to your `.env` file into the `ZOHOCRM_CLIENT_ID` and `ZOHOCRM_CLIENT_SECRET` fields.
-7. Set the Redirect URL for OAuth `<Cal.diy URL>/api/integrations/zohocrm/callback` replacing Cal.diy URL with the URI at which your application runs.
-8. In the "Settings" section check the "Multi-DC" option if you wish to use the same OAuth credentials for all data centers.
-9. Click the "Save"/ "UPDATE" button at the bottom footer.
-10. You're good to go. Now you can easily add your ZohoCRM integration in the Cal.diy settings.
+### Database migration fails
 
-### Obtaining Zoho Calendar Client ID and Secret
+1. Confirm `DATABASE_DIRECT_URL` is a direct, reachable PostgreSQL connection.
+2. Check Neon compute status and allowed connections.
+3. Run `yarn workspace @calcom/prisma db-deploy` locally against a safe branch.
+4. Inspect the failing migration SQL.
+5. Do not mark a migration as applied unless the actual schema matches it.
 
-[Follow these steps](./packages/app-store/zohocalendar/)
+### Booking email is missing
 
-### Obtaining Zoho Bigin Client ID and Secret
+Confirm `EMAIL_FROM` and either SMTP or Resend credentials are configured. Review application logs for mail-transport warnings. A successful database booking does not guarantee email delivery.
 
-[Follow these steps](./packages/app-store/zoho-bigin/)
+### Cron endpoint returns unauthorized
 
-### Obtaining Pipedrive Client ID and Secret
+Confirm Vercel has `CRON_SECRET`, redeploy after changing it, and verify the request sends:
 
-[Follow these steps](./packages/app-store/pipedrive-crm/)
+```text
+Authorization: Bearer <CRON_SECRET>
+```
 
-### Rate Limiting with Unkey
+Some endpoints also accept `CRON_API_KEY`; use the handler implementation as the source of truth.
 
-Cal.diy uses [Unkey](https://unkey.com) for rate limiting. This is an optional feature and is not required for self-hosting.
+### Calendar slots or conflicts are wrong
 
-If you want to enable rate limiting:
+Check:
 
-1. Sign up for an account at [unkey.com](https://unkey.com)
-2. Create a Root key with permissions for
-   `ratelimit.create_namespace` and `ratelimit.limit`
-3. Copy the root key to your `.env` file into the `UNKEY_ROOT_KEY` field
+- the user's time zone;
+- schedule time zone and overrides;
+- selected conflict-check calendars;
+- destination calendar;
+- provider credential validity;
+- calendar sync/subscription cron health;
+- daylight-saving transitions;
+- provider API errors in logs.
 
-Note: If you don't configure Unkey, Cal.diy will work normally without rate limiting enabled.
+## Maintenance guide
+
+### For every code change
+
+1. Read the owning feature and its tests before editing.
+2. Keep Schiceya-specific changes scoped and easy to distinguish from inherited code.
+3. Add or update focused tests.
+4. Run type checking and linting for affected workspaces.
+5. Run a production build for framework, dependency, or deployment changes.
+6. Review the Git diff for secrets and unrelated generated files.
+7. Deploy to preview when possible.
+8. Smoke-test the complete user journey, not only the changed component.
+
+### For every dependency update
+
+1. Read release notes for Next.js, React, Prisma, NextAuth, and provider SDKs.
+2. Keep Yarn and the lockfile synchronized.
+3. Regenerate Prisma artifacts if required.
+4. Run unit, type, build, and relevant end-to-end tests.
+5. Verify Vercel runtime compatibility.
+6. Check authentication, calendar OAuth, booking, and email delivery.
+
+### For every database change
+
+1. Create a Prisma migration.
+2. Review generated SQL.
+3. Test against a non-production Neon branch.
+4. Confirm forward and recovery behavior.
+5. Back up or branch production.
+6. Apply the migration.
+7. Verify key records and application flows.
+
+### When syncing from Cal.diy
+
+1. Fetch upstream without overwriting Schiceya work.
+2. Review upstream migrations and security changes first.
+3. Identify conflicts in branding, onboarding, event creation, Vercel configuration, and permission code.
+4. Preserve the booking-context behavior and private onboarding.
+5. Re-run focused and full verification.
+6. Update this README when architecture or operations change.
+
+## Project history and licensing
+
+Schiceya Cal is a personal fork built from [Cal.diy](https://github.com/calcom/cal.diy), which is derived from Cal.com community code. The repository retains the upstream MIT license and copyright notice in [`LICENSE`](./LICENSE).
+
+This fork:
+
+- is independently operated;
+- is not an official Cal.com hosted product;
+- is not endorsed or supported by Cal.com;
+- includes Schiceya-specific branding and product behavior;
+- remains subject to the licenses of its dependencies and external services.
+
+Cal.com trademarks and third-party provider trademarks belong to their respective owners.
 
 ## Contributing
 
-We welcome contributions! Whether it's fixing a typo, improving documentation, or building new features, your help makes Cal.diy better.
+Read [`CONTRIBUTING.md`](./CONTRIBUTING.md) before opening a pull request. For Schiceya-specific work, a change description should state:
 
-> **Important:** Cal.diy is a community fork. Contributions to this repo do **not** flow to Cal.com's production platform. See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
+- the user problem;
+- the affected flow;
+- whether the change is inherited or Schiceya-specific;
+- database and environment-variable impact;
+- security implications;
+- tests and manual verification performed.
 
-- Check out our [Contributing Guide](./CONTRIBUTING.md) for detailed steps.
-- Join the discussion on [GitHub Discussions](https://github.com/calcom/cal.diy/discussions).
-- Please follow our coding standards and commit message conventions to keep the project consistent.
+Security issues should not be posted publicly with exploitable details. Establish a Schiceya-specific private reporting contact before inviting external users or contributors.
 
-Even small improvements matter — thank you for helping us grow!
+---
 
-### Good First Issues
-
-We have a list of [help wanted](https://github.com/calcom/cal.diy/issues?q=is:issue+is:open+label:%22%F0%9F%99%8B%F0%9F%8F%BB%E2%80%8D%E2%99%82%EF%B8%8Fhelp+wanted%22) that contain small features and bugs which have a relatively limited scope. This is a great place to get started, gain experience, and get familiar with our contribution process.
-
-<!-- CONTRIBUTORS -->
-
-### Contributors
-
-<a href="https://github.com/calcom/cal.diy/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=calcom/cal.diy" />
-</a>
-
-<!-- TRANSLATIONS -->
-
-### Translations
-
-Don't code but still want to contribute? Join our [Discussions](https://github.com/calcom/cal.diy/discussions) and help translate Cal.diy into your language.
-
-<!-- ACKNOWLEDGEMENTS -->
-
-## Acknowledgements
-
-Cal.diy is built on the foundation created by [Cal.com](https://cal.com) and the many contributors to the original project. Special thanks to:
-
-- [Vercel](https://vercel.com/)
-- [Next.js](https://nextjs.org/)
-- [Day.js](https://day.js.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Prisma](https://prisma.io/)
+Schiceya Cal exists to make a complicated working life easier to read: one scheduling workspace, clear booking context, and fewer calendars to administrate.

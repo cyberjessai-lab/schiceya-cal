@@ -1,5 +1,6 @@
 import { getDefaultLocations } from "@calcom/app-store/_utils/getDefaultLocations";
 import { DailyLocationType } from "@calcom/app-store/constants";
+import { getBookingContextConfiguration } from "@calcom/features/eventtypes/lib/bookingContext";
 import { EventTypeRepository } from "@calcom/features/eventtypes/repositories/eventTypeRepository";
 import type { PrismaClient } from "@calcom/prisma";
 import { Prisma } from "@calcom/prisma/client";
@@ -47,6 +48,7 @@ export const createHandler = async ({ ctx, input }: CreateOptions) => {
     schedulingType,
     teamId,
     metadata,
+    bookingContexts,
     locations: inputLocations,
     scheduleId,
     calVideoSettings,
@@ -74,6 +76,7 @@ export const createHandler = async ({ ctx, input }: CreateOptions) => {
     inputLocations && inputLocations.length !== 0 ? inputLocations : await getDefaultLocations(ctx.user);
 
   const isCalVideoLocationActive = locations.some((location) => location.type === DailyLocationType);
+  const bookingContextConfiguration = getBookingContextConfiguration(bookingContexts);
 
   const data: Prisma.EventTypeCreateInput = {
     ...rest,
@@ -83,6 +86,12 @@ export const createHandler = async ({ ctx, input }: CreateOptions) => {
     users: isManagedEventType || schedulingType ? undefined : { connect: { id: userId } },
     locations,
     schedule: scheduleId ? { connect: { id: scheduleId } } : undefined,
+    ...(bookingContextConfiguration
+      ? {
+          bookingFields: bookingContextConfiguration.bookingFields as Prisma.InputJsonValue,
+          eventName: bookingContextConfiguration.eventName,
+        }
+      : null),
   };
 
   if (isCalVideoLocationActive && calVideoSettings) {

@@ -135,7 +135,7 @@ async function writeIfChanged(filepath, newContent) {
     .catch(() => "");
   if (currentContent === newContent) return false;
   await fsExtra.writeFile(filepath, newContent, "utf8");
-  await $`node ${biomeBin} format --write ${filepath}`;
+  await $`node ${biomeBin} format --write --no-errors-on-unmatched ${filepath}`;
   return true;
 }
 
