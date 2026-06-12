@@ -4,13 +4,15 @@ export class OnboardingPathService {
   static async getGettingStartedPath(): Promise<string> {
     const featureRepository = getFeatureRepository();
     const onboardingV3Enabled = await featureRepository.checkIfFeatureIsEnabledGlobally("onboarding-v3");
-    return onboardingV3Enabled ? "/onboarding/getting-started" : "/getting-started";
+    if (onboardingV3Enabled) {
+      return "/onboarding/personal/settings";
+    }
+
+    return "/getting-started";
   }
 
   static async getGettingStartedPathWhenInvited(): Promise<string> {
-    const featureRepository = getFeatureRepository();
-    const onboardingV3Enabled = await featureRepository.checkIfFeatureIsEnabledGlobally("onboarding-v3");
-    return onboardingV3Enabled ? "/onboarding/personal/settings" : "/getting-started";
+    return OnboardingPathService.getGettingStartedPath();
   }
 
   static async getGettingStartedPathWithParams(queryParams?: Record<string, string>): Promise<string> {

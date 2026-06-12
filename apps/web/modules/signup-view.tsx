@@ -291,7 +291,10 @@ export default function Signup({
         pushGTMEvent("create_account", { email: data.email, user: data.username, lang: data.language });
       }
 
-      const gettingStartedPath = onboardingV3Enabled ? "onboarding/getting-started" : "getting-started";
+      let gettingStartedPath = "getting-started";
+      if (onboardingV3Enabled) {
+        gettingStartedPath = "onboarding/personal/settings";
+      }
       const verifyOrGettingStarted = emailVerificationEnabled ? "auth/verify-email" : gettingStartedPath;
       const constructCallBackIfUrlPresent = () => {
         if (isOrgInviteByLink) {

@@ -1,6 +1,5 @@
 import dayjs from "@calcom/dayjs";
 import { FeaturesRepository } from "@calcom/features/flags/features.repository";
-import { MembershipRepository } from "@calcom/features/membership/repositories/MembershipRepository";
 import { ProfileRepository } from "@calcom/features/profile/repositories/ProfileRepository";
 import { UserRepository } from "@calcom/features/users/repositories/UserRepository";
 import { prisma } from "@calcom/prisma";
@@ -64,13 +63,9 @@ export async function checkOnboardingRedirect(
   // Determine which onboarding path to use
   const onboardingV3Enabled = await featuresRepository.checkIfFeatureIsEnabledGlobally("onboarding-v3");
 
-  // Check for any team membership (pending or accepted) to handle users who signed up via invite token
-  // When users sign up with an invite token, the membership is auto-accepted
-  const hasTeamMembership = await MembershipRepository.hasAnyTeamMembershipByUserId({ userId });
-
-  if (hasTeamMembership && onboardingV3Enabled) {
+  if (onboardingV3Enabled) {
     return "/onboarding/personal/settings";
   }
 
-  return onboardingV3Enabled ? "/onboarding/getting-started" : "/getting-started";
+  return "/getting-started";
 }
